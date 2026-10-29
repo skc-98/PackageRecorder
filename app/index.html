@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Packing Recorder</title>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'none'"
+    />
+    <style>
+      /* 기본 스타일과 공통 화면 구성 */
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #edf1f5;
+        color: #233044;
+        font:
+          14px "Segoe UI",
+          Arial,
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid #dbe1e8;
+        background: white;
+        border-radius: 8px;
+        padding: 11px 17px;
+        color: inherit;
+      }
+      button:hover {
+        background: #f1f5fa;
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      button:focus-visible,
+      input:focus-visible {
+        outline: 3px solid #9fbaff;
+      }
+      input,
+      select {
+        border: 1px solid #dbe1e8;
+        padding: 13px;
+        border-radius: 8px;
+        background: white;
+        color: #233044;
+      }
+      header {
+        height: 68px;
+        padding: 0 34px;
+        background: white;
+        border-bottom: 1px solid #dce3ec;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.4px;
+      }
+      .logo {
+        display: inline-grid;
+        place-items: center;
+        background: #3264e8;
+        color: white;
+        border-radius: 9px;
+        width: 31px;
+        height: 31px;
+        margin-right: 10px;
+      }
+      .badge {
+        font-size: 11px;
+        letter-spacing: 1px;
+        background: #eef2fb;
+        color: #5873a4;
+        padding: 6px 9px;
+        border-radius: 5px;
+      }
+      .page {
+        max-width: 1080px;
+        margin: 46px auto;
+        padding: 0 24px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.7px;
+        color: #6b7c96;
+      }
+      h1 {
+        font-size: 29px;
+        letter-spacing: -1px;
+        margin: 12px 0;
+      }
+      p {
+        color: #79869a;
+        line-height: 1.7;
+      }
+      /* 시작 화면: 저장 위치와 날짜 선택 */
+      .steps {
+        display: flex;
+        gap: 28px;
+        color: #9ca7b7;
+        margin: 30px 0;
+      }
+      .steps b {
+        color: #3364df;
+      }
+      .setup {
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .card {
+        background: white;
+        border: 1px solid #dfe5ed;
+        border-radius: 15px;
+        box-shadow: 0 10px 35px #263c5b05;
+        padding: 30px;
+      }
+      label {
+        font-weight: 650;
+        display: block;
+        margin: 0 0 10px;
+      }
+      .field {
+        margin-bottom: 27px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .path {
+        flex: 1;
+        min-width: 0;
+        background: #f7f9fc;
+        padding: 14px;
+        border: 1px solid #e3e8f0;
+        border-radius: 8px;
+        color: #8994a5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .primary {
+        background: #3264e8;
+        color: white;
+        border-color: #3264e8;
+      }
+      .primary:hover {
+        background: #2354cf;
+      }
+      .wide {
+        width: 100%;
+        padding: 15px;
+      }
+      .hint {
+        font-size: 12px;
+        color: #8a95a6;
+        margin: 9px 0;
+      }
+      .summary {
+        background: #f5f7fb;
+        border-radius: 9px;
+        padding: 17px;
+        margin: 0 0 24px;
+        line-height: 1.9;
+        font-size: 12px;
+      }
+      .summary strong {
+        display: block;
+        color: #47628c;
+        overflow-wrap: anywhere;
+      }
+      .link {
+        border: 0;
+        background: transparent;
+        color: #426be1;
+        padding: 6px 0;
+        font-size: 12px;
+      }
+      .footer {
+        text-align: center;
+        font-size: 11px;
+        color: #9da7b6;
+        margin-top: 24px;
+      }
+      /* 녹화 화면: 주문번호와 제어 버튼 */
+      .toolbar {
+        display: flex;
+        gap: 15px;
+        align-items: end;
+        margin: 25px 0 20px;
+      }
+      .toolbar .order {
+        flex: 1;
+      }
+      .toolbar input {
+        width: 100%;
+        height: 49px;
+      }
+      .control {
+        height: 49px;
+        width: 49px;
+        padding: 0;
+        font-size: 19px;
+      }
+      .record {
+        color: #e44452;
+      }
+      .window {
+        background: white;
+        border: 1px solid #d8e0eb;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 16px 45px #233e6010;
+      }
+      .titlebar {
+        height: 47px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+        border-bottom: 1px solid #e4e9f1;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .titlebar button {
+        border: 0;
+        padding: 5px 10px;
+        font-size: 17px;
+      }
+      .inside {
+        padding: 22px;
+      }
+      /* 카메라 미리보기와 녹화 상태 */
+      .video {
+        position: relative;
+        background: #171f29;
+        border-radius: 9px;
+        overflow: hidden;
+        aspect-ratio: 16/9;
+      }
+      .video canvas,
+      .video video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .video video {
+        position: absolute;
+        inset: 0;
+      }
+      .overlay {
+        position: absolute;
+        inset: 16px 17px auto;
+        display: flex;
+        justify-content: space-between;
+        color: #e9eef7;
+        font-size: 11px;
+      }
+      .pill {
+        padding: 6px 9px;
+        background: #101924b8;
+        border-radius: 4px;
+      }
+      .dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        background: #82b5a7;
+        border-radius: 50%;
+        margin-right: 6px;
+      }
+      .recording .dot {
+        background: #f75a6a;
+      }
+      .bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        color: #8b98a9;
+        font-size: 12px;
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 245px;
+        gap: 24px;
+      }
+      /* 작업 기록 */
+      .side {
+        border-left: 1px solid #e9edf3;
+        padding-left: 23px;
+      }
+      .side h3 {
+        font-size: 13px;
+        margin: 0 0 18px;
+      }
+      .side p {
+        font-size: 12px;
+      }
+      .log {
+        padding: 12px 0;
+        border-bottom: 1px solid #eef1f5;
+        font-size: 12px;
+        overflow-wrap: anywhere;
+      }
+      .log small {
+        color: #99a4b3;
+        display: block;
+        margin-top: 6px;
+      }
+      .empty {
+        padding: 28px 0;
+        text-align: center;
+        color: #99a4b3;
+        font-size: 12px;
+      }
+      /* 소형 화면 */
+      .compact .window {
+        width: 420px;
+        max-width: 100%;
+        margin-left: auto;
+      }
+      .compact .inside {
+        padding: 12px;
+      }
+      .compact .toolbar {
+        margin: 0 0 12px;
+        gap: 6px;
+      }
+      .compact .toolbar label,
+      .compact .side,
+      .compact .bottom,
+      .compact .intro,
+      .compact .toolbar .orderhint {
+        display: none;
+      }
+      .compact .workspace {
+        display: block;
+      }
+      .compact .toolbar input {
+        height: 37px;
+        font-size: 12px;
+        padding: 8px;
+      }
+      .compact .control {
+        height: 37px;
+        width: 34px;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      .compact .video {
+        aspect-ratio: 16/9;
+      }
+      .compact .titlebar {
+        height: 36px;
+        padding: 0 12px;
+      }
+      .compact .overlay {
+        inset: 10px 10px auto;
+        font-size: 10px;
+      }
+      .compact .page {
+        max-width: 1080px;
+      }
+      .notice {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 13px 22px;
+        border-radius: 9px;
+        background: #24324a;
+        color: white;
+        box-shadow: 0 6px 25px #0002;
+        max-width: 90%;
+        font-size: 13px;
+        z-index: 10;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      /* 좁은 창에 맞춘 배치 */
+      @media (max-width: 720px) {
+        header {
+          padding: 0 18px;
+        }
+        .page {
+          margin: 25px auto;
+          padding: 0 15px;
+        }
+        .card {
+          padding: 22px;
+        }
+        .workspace {
+          display: block;
+        }
+        .side {
+          border: 0;
+          padding: 22px 0 0;
+        }
+        .toolbar {
+          gap: 7px;
+        }
+        .inside {
+          padding: 15px;
+        }
+        .bottom {
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        .compact .window {
+          margin: auto;
+        }
+        .steps {
+          font-size: 12px;
+        }
+        .intro h1 {
+          font-size: 24px;
+        }
+      }
+
+      /* Windows 소형 창 전용 설정 */
+      body.compact {
+        background: #fff;
+      }
+      body.compact > header,
+      body.compact .footer {
+        display: none;
+      }
+      body.compact .page {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+      body.compact .window {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      body.compact .inside {
+        padding: 10px;
+      }
+      body.compact .video {
+        aspect-ratio: 16/9;
+      }
+      body.compact .titlebar {
+        height: 34px;
+      }
+      body.compact .toolbar .order {
+        min-width: 0;
+      }
+      .error {
+        color: #c63648;
+      }
+      #savepath {
+        overflow-wrap: anywhere;
+        max-width: 100%;
+      }
+      #logs {
+        max-height: 360px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 상단 헤더 -->
+    <header>
+      <div class="brand"><span class="logo">▣</span>Packing Recorder</div>
+      <span class="badge">WINDOWS v1.0.1</span>
+    </header>
+
+    <!-- 시작 화면 -->
+    <main class="page" id="setup">
+      <div class="setup">
+        <div class="eyebrow">START YOUR WORKDAY</div>
+        <h1>오늘의 작업을 준비하세요.</h1>
+        <p>저장할 위치와 작업 날짜를 선택하면 준비가 끝나요.</p>
+        <div class="steps">
+          <b>① 저장 설정</b><span>→</span><span>② 포장 녹화</span>
+        </div>
+        <div class="card">
+          <div class="field">
+            <label>저장 위치</label>
+            <div class="row">
+              <div id="location" class="path">
+                폴더 또는 이동식 디스크를 선택하세요
+              </div>
+              <button id="browse">폴더 선택</button>
+            </div>
+            <div class="hint">이동식 디스크 안의 폴더도 선택할 수 있어요.</div>
+          </div>
+          <div class="field">
+            <label for="date">작업 날짜</label
+            ><input id="date" type="date" style="width: 100%" />
+          </div>
+          <div class="summary">
+            영상 저장 폴더<strong id="target"
+              >저장 위치를 먼저 선택해 주세요.</strong
+            ><span>같은 날짜의 폴더가 있으면 그대로 사용합니다.</span>
+          </div>
+          <button id="start" class="primary wide" disabled>시작하기 →</button>
+        </div>
+        <div class="footer">로그인 없이 바로 시작 · 내 저장소에 보관</div>
+      </div>
+    </main>
+
+    <!-- 녹화 화면 -->
+    <main class="page" id="recorder" hidden>
+      <div class="intro">
+        <div class="eyebrow">PACKING WORKSPACE</div>
+        <h1>포장 녹화</h1>
+        <p>주문번호를 입력하고 녹화를 시작하세요.</p>
+      </div>
+      <div class="window">
+        <div class="titlebar">
+          <span
+            >▣ Packing Recorder
+            <span id="modeLabel" style="color: #94a0b2; margin-left: 8px"
+              >로컬 녹화</span
+            ></span
+          >
+          <div>
+            <button
+              id="settings"
+              title="저장 설정으로 돌아가기"
+              aria-label="저장 설정으로 돌아가기"
+            >
+              ⚙</button
+            ><button id="size" title="소형 화면으로" aria-label="소형 화면으로">
+              ▱
+            </button>
+          </div>
+        </div>
+        <div class="inside">
+          <div class="toolbar">
+            <div class="order">
+              <label for="order">주문번호</label
+              ><input
+                id="order"
+                placeholder="주문번호를 입력하세요"
+                autocomplete="off"
+              />
+            </div>
+            <button
+              id="record"
+              class="control record"
+              title="녹화 시작"
+              aria-label="녹화 시작"
+            >
+              ●</button
+            ><button
+              id="pause"
+              class="control"
+              title="일시정지"
+              aria-label="일시정지"
+              disabled
+            >
+              Ⅱ</button
+            ><button
+              id="stop"
+              class="control"
+              title="녹화 정지"
+              aria-label="녹화 정지"
+              disabled
+            >
+              ■
+            </button>
+          </div>
+          <div class="workspace">
+            <div>
+              <div class="video" id="screen">
+                <canvas id="canvas" width="960" height="540"></canvas
+                ><video id="camera" autoplay muted playsinline hidden></video>
+                <div class="overlay">
+                  <span class="pill"
+                    ><i class="dot"></i><span id="state">녹화 대기</span></span
+                  ><span class="pill" id="timer">00:00:00</span>
+                </div>
+              </div>
+              <div class="bottom">
+                <span id="savepath"></span>
+                <div class="row">
+                  <select
+                    id="device"
+                    aria-label="카메라 선택"
+                    style="max-width: 180px; padding: 7px"
+                  >
+                    <option value="">기본 카메라</option></select
+                  ><button
+                    id="connect"
+                    style="font-size: 12px; padding: 7px 10px"
+                  >
+                    카메라 연결
+                  </button>
+                </div>
+              </div>
+            </div>
+            <aside class="side">
+              <h3>
+                이번 작업 기록
+                <span id="count" style="float: right; color: #3264e8">0</span>
+              </h3>
+              <div id="logs">
+                <div class="empty">
+                  아직 녹화한 영상이 없어요.<br /><br />첫 포장을 시작해 보세요.
+                </div>
+              </div>
+              <button id="openfolder" class="wide">저장 폴더 열기</button>
+              <p id="explain">영상은 선택한 저장소에만 저장됩니다.</p>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <div class="footer" id="modefoot">
+        소형 화면은 다른 창 위에 표시됩니다. · Enter 키로 녹화 시작
+      </div>
+    </main>
+    <!-- 상태 알림 -->
+    <div id="toast" class="notice" role="status" hidden></div>
+    <script src="renderer.js"></script>
+  </body>
+</html>

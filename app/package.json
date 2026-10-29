@@ -1,0 +1,15 @@
+{
+  "name": "package-recorder",
+  "productName": "PackageRecorder",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Local packing video recorder for Windows",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test storage.test.js renderer.test.js finalize-webm.test.js"
+  },
+  "devDependencies": {
+    "electron": "45.1.0"
+  }
+}

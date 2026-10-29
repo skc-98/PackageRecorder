@@ -1,0 +1,5 @@
+/PackageRecorder-Windows-x64/
+/*.zip
+node_modules/
+*.webm
+*.partial
